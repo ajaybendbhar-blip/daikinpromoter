@@ -28,7 +28,7 @@
 <div class="app">
   <section class="panel">
     <h1>Promoter Competition Submission</h1>
-    <p class="meta">Fill basic promoter and store details once, then capture segment-wise model data, then upload store display and BEE label photos before final submit.</p>
+    <p class="meta">Fill basic promoter and store details once, then capture segment-wise model data, then upload BEE label photo and display counts before final submit.</p>
   </section>
 
   <section class="panel">
@@ -67,12 +67,12 @@
   </section>
 
   <section class="panel">
-    <h2>Third section: Photos and display</h2>
+    <h2>Third section: Photo and display</h2>
     <div class="grid2">
       <div>
         <label for="beePhoto">BEE Star Rating Label Photo</label>
-        <input id="beePhoto" type="file" accept="image/*" capture="environment">
-        <div class="hint">Use phone camera or gallery.</div>
+        <input id="beePhoto" type="file" accept="image/*">
+        <div class="hint">Select from camera or gallery. Large images will be compressed automatically before upload.</div>
       </div>
       <div>
         <label for="daikinDisplay">Daikin Total Display</label>
@@ -104,21 +104,230 @@ const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx4_q0ZfYTUzJVjO5EI
 const segments = ['1T 3*', '1.5T 3*', '1T 5*', '1.5T 5*'];
 const state = { active: '1T 3*', data: Object.fromEntries(segments.map(s => [s, []])), saved: Object.fromEntries(segments.map(s => [s, false])) };
 const $ = id => document.getElementById(id);
-function note(msg, type='ok') { const n = $('note'); n.textContent = msg; n.className = `note show ${type}`; }
-function fillSegments() { $('segment').innerHTML = segments.map(s => `<option value="${s}">${s}</option>`).join(''); $('segment').value = state.active; }
-function renderSegments() { $('segments').innerHTML = segments.map(seg => `<button class="seg ${seg===state.active?'active':''} ${state.saved[seg]?'done':''}" onclick="switchSegment('${seg}')"><strong>${seg}</strong><div style="margin-top:8px;color:#6f6b63;font-size:12px;">${state.saved[seg]?'Saved':'Pending'} · ${state.data[seg].length} entries</div></button>`).join(''); $('formTitle').textContent = `Entry: ${state.active}`; $('statCurrent').textContent = state.active; $('statDone').textContent = segments.filter(s => state.saved[s]).length; $('statRows').textContent = segments.reduce((a,s) => a + state.data[s].length, 0); $('segment').value = state.active; }
-function renderEntries() { const rows = state.data[state.active]; const box = $('entries'); if (!rows.length) { box.innerHTML = '<div class="empty">No entries added for this segment.</div>'; return; } box.innerHTML = rows.map((row, index) => `<div class="entry"><h3>${row.brand}</h3><p><strong>Segment:</strong> ${row.segment}</p><p><strong>Model:</strong> ${row.model}</p><p><strong>Best Customer Price:</strong> ₹ ${Number(row.price).toLocaleString('en-IN')}</p><button class="btn btnDanger" style="margin-top:12px;" onclick="deleteEntry(${index})">Delete</button></div>`).join(''); }
-window.switchSegment = function(seg) { state.active = seg; renderSegments(); renderEntries(); }
-window.deleteEntry = function(index) { state.data[state.active].splice(index, 1); state.saved[state.active] = false; renderSegments(); renderEntries(); note('Entry deleted. Please save this segment again.'); }
-$('segment').addEventListener('change', e => { state.active = e.target.value; renderSegments(); renderEntries(); });
-function topFieldsValid() { return $('promoter').value.trim() && $('employeeCode').value.trim() && $('storeName').value.trim() && $('storeCode').value.trim() && $('dealerCategory').value.trim() && $('storeCity').value.trim() && $('storeAddress').value.trim(); }
-$('addBtn').addEventListener('click', () => { if (!topFieldsValid()) { note('Please fill all one-time basic details first.', 'error'); return; } const brand = $('brand').value.trim(); const model = $('model').value.trim(); const price = $('price').value.trim(); if (!brand || !model || !price) { note('Please fill brand, model number and best customer price.', 'error'); return; } state.data[state.active].push({ segment: state.active, brand, model, price }); state.saved[state.active] = false; ['brand','model','price'].forEach(id => $(id).value = ''); renderSegments(); renderEntries(); note(`Entry added for ${state.active}.`); });
-function saveSegment() { if (!state.data[state.active].length) { note('Add at least one row before saving this segment.', 'error'); return false; } state.saved[state.active] = true; renderSegments(); renderEntries(); note(`${state.active} saved successfully.`); return true; }
+
+function note(msg, type='ok') {
+  const n = $('note');
+  n.textContent = msg;
+  n.className = `note show ${type}`;
+}
+
+function fillSegments() {
+  $('segment').innerHTML = segments.map(s => `<option value="${s}">${s}</option>`).join('');
+  $('segment').value = state.active;
+}
+
+function renderSegments() {
+  $('segments').innerHTML = segments.map(seg => `
+    <button class="seg ${seg===state.active?'active':''} ${state.saved[seg]?'done':''}" onclick="switchSegment('${seg}')">
+      <strong>${seg}</strong>
+      <div style="margin-top:8px;color:#6f6b63;font-size:12px;">${state.saved[seg]?'Saved':'Pending'} · ${state.data[seg].length} entries</div>
+    </button>
+  `).join('');
+  $('formTitle').textContent = `Entry: ${state.active}`;
+  $('statCurrent').textContent = state.active;
+  $('statDone').textContent = segments.filter(s => state.saved[s]).length;
+  $('statRows').textContent = segments.reduce((a,s) => a + state.data[s].length, 0);
+  $('segment').value = state.active;
+}
+
+function renderEntries() {
+  const rows = state.data[state.active];
+  const box = $('entries');
+  if (!rows.length) {
+    box.innerHTML = '<div class="empty">No entries added for this segment.</div>';
+    return;
+  }
+  box.innerHTML = rows.map((row, index) => `
+    <div class="entry">
+      <h3>${row.brand}</h3>
+      <p><strong>Segment:</strong> ${row.segment}</p>
+      <p><strong>Model:</strong> ${row.model}</p>
+      <p><strong>Best Customer Price:</strong> ₹ ${Number(row.price).toLocaleString('en-IN')}</p>
+      <button class="btn btnDanger" style="margin-top:12px;" onclick="deleteEntry(${index})">Delete</button>
+    </div>
+  `).join('');
+}
+
+window.switchSegment = function(seg) {
+  state.active = seg;
+  renderSegments();
+  renderEntries();
+}
+
+window.deleteEntry = function(index) {
+  state.data[state.active].splice(index, 1);
+  state.saved[state.active] = false;
+  renderSegments();
+  renderEntries();
+  note('Entry deleted. Please save this segment again.');
+}
+
+$('segment').addEventListener('change', e => {
+  state.active = e.target.value;
+  renderSegments();
+  renderEntries();
+});
+
+function topFieldsValid() {
+  return $('promoter').value.trim() &&
+         $('employeeCode').value.trim() &&
+         $('storeName').value.trim() &&
+         $('storeCode').value.trim() &&
+         $('dealerCategory').value.trim() &&
+         $('storeCity').value.trim() &&
+         $('storeAddress').value.trim();
+}
+
+$('addBtn').addEventListener('click', () => {
+  if (!topFieldsValid()) {
+    note('Please fill all one-time basic details first.', 'error');
+    return;
+  }
+  const brand = $('brand').value.trim();
+  const model = $('model').value.trim();
+  const price = $('price').value.trim();
+
+  if (!brand || !model || !price) {
+    note('Please fill brand, model number and best customer price.', 'error');
+    return;
+  }
+
+  state.data[state.active].push({ segment: state.active, brand, model, price });
+  state.saved[state.active] = false;
+  ['brand','model','price'].forEach(id => $(id).value = '');
+  renderSegments();
+  renderEntries();
+  note(`Entry added for ${state.active}.`);
+});
+
+function saveSegment() {
+  if (!state.data[state.active].length) {
+    note('Add at least one row before saving this segment.', 'error');
+    return false;
+  }
+  state.saved[state.active] = true;
+  renderSegments();
+  renderEntries();
+  note(`${state.active} saved successfully.`);
+  return true;
+}
+
 $('saveBtn').addEventListener('click', saveSegment);
-$('nextBtn').addEventListener('click', () => { if (!saveSegment()) return; const i = segments.indexOf(state.active); if (i < segments.length - 1) { state.active = segments[i + 1]; renderSegments(); renderEntries(); note(`Continue with ${state.active}.`); } else { note('All segments saved. Complete the third section and then final submit.'); } });
-function fileToBase64(file) { return new Promise((resolve, reject) => { if (!file) return resolve(''); const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = reject; reader.readAsDataURL(file); }); }
-$('submitBtn').addEventListener('click', async () => { if (!topFieldsValid()) { note('Please fill all one-time basic details first.', 'error'); return; } const pending = segments.filter(s => !state.saved[s]); if (pending.length) { note(`Please save all pending segments first: ${pending.join(', ')}`, 'error'); return; } const allRows = segments.flatMap(seg => state.data[seg]); if (!allRows.length) { note('Please add at least one segment entry before final submit.', 'error'); return; } const daikinDisplay = $('daikinDisplay').value.trim(); const storeDisplay = $('storeDisplay').value.trim(); if (!daikinDisplay || !storeDisplay) { note('Please fill Daikin total display and Store total display.', 'error'); return; } let beePhotoBase64 = ''; const beeFile = $('beePhoto').files[0]; if (beeFile) { beePhotoBase64 = await fileToBase64(beeFile); } const formData = new URLSearchParams(); formData.append('submittedAt', new Date().toISOString()); formData.append('promoter', $('promoter').value.trim()); formData.append('employeeCode', $('employeeCode').value.trim()); formData.append('storeName', $('storeName').value.trim()); formData.append('storeCode', $('storeCode').value.trim()); formData.append('dealerCategory', $('dealerCategory').value.trim()); formData.append('storeCity', $('storeCity').value.trim()); formData.append('storeAddress', $('storeAddress').value.trim()); formData.append('daikinDisplay', daikinDisplay); formData.append('storeDisplay', storeDisplay); formData.append('beePhotoBase64', beePhotoBase64); formData.append('rows', JSON.stringify(allRows)); try { const res = await fetch(WEB_APP_URL, { method: 'POST', body: formData }); const text = await res.text(); if (!res.ok) throw new Error(text || 'Submission failed'); note('Submitted successfully. Data saved to Google Sheet.'); } catch (err) { note(`Submission failed: ${err.message}`, 'error'); } });
-fillSegments(); renderSegments(); renderEntries();
+
+$('nextBtn').addEventListener('click', () => {
+  if (!saveSegment()) return;
+  const i = segments.indexOf(state.active);
+  if (i < segments.length - 1) {
+    state.active = segments[i + 1];
+    renderSegments();
+    renderEntries();
+    note(`Continue with ${state.active}.`);
+  } else {
+    note('All segments saved. Complete the third section and then final submit.');
+  }
+});
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) return resolve('');
+    const reader = new FileReader();
+    reader.onload = event => {
+      const img = new Image();
+      img.onload = () => {
+        const maxWidth = 1280;
+        const maxHeight = 1280;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > height && width > maxWidth) {
+          height = Math.round(height * (maxWidth / width));
+          width = maxWidth;
+        } else if (height >= width && height > maxHeight) {
+          width = Math.round(width * (maxHeight / height));
+          height = maxHeight;
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        const compressed = canvas.toDataURL('image/jpeg', 0.7);
+        resolve(compressed);
+      };
+      img.onerror = reject;
+      img.src = event.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+$('submitBtn').addEventListener('click', async () => {
+  if (!topFieldsValid()) {
+    note('Please fill all one-time basic details first.', 'error');
+    return;
+  }
+
+  const pending = segments.filter(s => !state.saved[s]);
+  if (pending.length) {
+    note(`Please save all pending segments first: ${pending.join(', ')}`, 'error');
+    return;
+  }
+
+  const allRows = segments.flatMap(seg => state.data[seg]);
+  if (!allRows.length) {
+    note('Please add at least one segment entry before final submit.', 'error');
+    return;
+  }
+
+  const daikinDisplay = $('daikinDisplay').value.trim();
+  const storeDisplay = $('storeDisplay').value.trim();
+  if (!daikinDisplay || !storeDisplay) {
+    note('Please fill Daikin total display and Store total display.', 'error');
+    return;
+  }
+
+  let beePhotoBase64 = '';
+  const beeFile = $('beePhoto').files[0];
+  if (beeFile) {
+    if (beeFile.size > 10 * 1024 * 1024) {
+      note('Image file is too large. Please choose a smaller image.', 'error');
+      return;
+    }
+    note('Compressing image, please wait...');
+    beePhotoBase64 = await fileToBase64(beeFile);
+  }
+
+  const formData = new URLSearchParams();
+  formData.append('submittedAt', new Date().toISOString());
+  formData.append('promoter', $('promoter').value.trim());
+  formData.append('employeeCode', $('employeeCode').value.trim());
+  formData.append('storeName', $('storeName').value.trim());
+  formData.append('storeCode', $('storeCode').value.trim());
+  formData.append('dealerCategory', $('dealerCategory').value.trim());
+  formData.append('storeCity', $('storeCity').value.trim());
+  formData.append('storeAddress', $('storeAddress').value.trim());
+  formData.append('daikinDisplay', daikinDisplay);
+  formData.append('storeDisplay', storeDisplay);
+  formData.append('beePhotoBase64', beePhotoBase64);
+  formData.append('rows', JSON.stringify(allRows));
+
+  try {
+    note('Submitting data, please wait...');
+    const res = await fetch(WEB_APP_URL, { method: 'POST', body: formData });
+    const text = await res.text();
+    if (!res.ok) throw new Error(text || 'Submission failed');
+    note('Submitted successfully. Data saved to Google Sheet.');
+  } catch (err) {
+    note(`Submission failed: ${err.message}`, 'error');
+  }
+});
+
+fillSegments();
+renderSegments();
+renderEntries();
 </script>
 </body>
 </html>
