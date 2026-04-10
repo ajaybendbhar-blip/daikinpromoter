@@ -1,90 +1,209 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Promoter Competition Submission</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #f7f6f2; }
-    .wrap { max-width: 820px; margin: auto; padding: 16px; }
-    .box { background: #fff; border: 1px solid #ddd; border-radius: 16px; padding: 18px; margin-bottom: 16px; }
-    h1, h2 { margin-top: 0; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    input, select, textarea, button {
-      width: 100%; padding: 12px; border-radius: 10px; border: 1px solid #ccc; font-size: 15px; box-sizing: border-box;
-    }
-    textarea { min-height: 80px; }
-    button { background: #01696f; color: white; border: none; font-weight: bold; cursor: pointer; }
-    .danger { background: #f4dce0; color: #8b1e2d; }
-    .row { border: 1px solid #ddd; border-radius: 12px; padding: 12px; margin-bottom: 10px; }
-    .msg { display:none; padding:12px; border-radius:12px; margin-bottom:12px; }
-    .ok { display:block; background:#e6f6f3; color:#0a4f54; }
-    .err { display:block; background:#f9e4e8; color:#8b1e2d; }
-    @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promoter Data Submission</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --accent-color: #3498db;
+            --success-color: #27ae60;
+            --bg-color: #f0f2f5;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            background-color: var(--bg-color);
+            display: flex;
+            justify-content: center;
+        }
+
+        .container { 
+            width: 100%;
+            max-width: 550px; 
+            background: white; 
+            padding: 30px; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+        }
+
+        h2 { 
+            color: var(--primary-color); 
+            margin-top: 0;
+            text-align: center;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 15px;
+        }
+
+        .form-group { margin-bottom: 15px; }
+
+        label { 
+            display: block;
+            font-size: 0.85em; 
+            font-weight: 600; 
+            color: #666; 
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        input, select { 
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid #ddd; 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        button { 
+            width: 100%; 
+            padding: 14px; 
+            background: var(--success-color); 
+            color: white; 
+            border: none; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 1.1em;
+            font-weight: bold; 
+            margin-top: 10px;
+            transition: opacity 0.3s;
+        }
+
+        button:hover { opacity: 0.9; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+
+        #status { 
+            text-align: center; 
+            margin-top: 20px; 
+            font-weight: 600;
+            padding: 10px;
+            border-radius: 4px;
+        }
+
+        .row-flex { display: flex; gap: 10px; }
+        .row-flex > div { flex: 1; }
+    </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="box">
-    <h1>Promoter Competition Submission</h1>
-    <div id="msg" class="msg"></div>
-  </div>
 
-  <form id="mainForm" method="POST" action="https://script.google.com/macros/s/PASTE_YOUR_EXEC_URL_HERE/exec">
-    <div class="box">
-      <h2>One-time basic details</h2>
-      <div class="grid">
-        <input name="promoter" id="promoter" placeholder="Promoter Name" required>
-        <input name="employeeCode" id="employeeCode" placeholder="Promoter Employee Code" required>
-        <input name="storeName" id="storeName" placeholder="Store Name" required>
-        <input name="storeCode" id="storeCode" placeholder="Store Code" required>
-        <select name="dealerCategory" id="dealerCategory" required>
-          <option value="">Dealer Category</option>
-          <option>NR</option>
-          <option>GT</option>
-          <option>DSP</option>
-        </select>
-        <input name="storeCity" id="storeCity" placeholder="Store City" required>
-        <textarea name="storeAddress" id="storeAddress" placeholder="Store Address" style="grid-column:1/-1;" required></textarea>
-      </div>
-    </div>
+<div class="container">
+    <h2>Promoter Entry Form</h2>
+    
+    <form id="dataForm">
+        <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbycNIF0Eq7BSuYY5lbn75bN6R2PhGYyF9knAvo_B7b6Z250oN-44DJorftedp3ZJqb4sw/exec">
 
-    <div class="box">
-      <h2>Segment entry</h2>
-      <div class="grid">
-        <select name="segment" id="segment" required>
-          <option>1T 3*</option>
-          <option>1.5T 3*</option>
-          <option>1T 5*</option>
-          <option>1.5T 5*</option>
-        </select>
-        <select name="brand" id="brand" required>
-          <option value="">Brand</option>
-          <option>Daikin</option>
-          <option>LG</option>
-          <option>Voltas</option>
-          <option>Bluestar</option>
-          <option>Hitachi</option>
-          <option>Panasonic</option>
-          <option>Llyod</option>
-        </select>
-        <input name="model" id="model" placeholder="Model Number" required>
-        <input name="price" id="price" type="number" placeholder="Best Customer Price" required>
-      </div>
-    </div>
+        <div class="row-flex">
+            <div class="form-group">
+                <label>Promoter Name</label>
+                <input type="text" id="promoter" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+                <label>Dealer Name</label>
+                <input type="text" id="dealer" placeholder="Retail Hub" required>
+            </div>
+        </div>
 
-    <div class="box">
-      <h2>Display details</h2>
-      <div class="grid">
-        <input name="daikinDisplay" id="daikinDisplay" type="number" placeholder="Daikin Total Display" required>
-        <input name="storeDisplay" id="storeDisplay" type="number" placeholder="Store Total Display" required>
-      </div>
-    </div>
+        <div class="form-group">
+            <label>Segment</label>
+            <select id="segment">
+                <option value="Split AC">Split AC</option>
+                <option value="Window AC">Window AC</option>
+                <option value="Inverter AC">Inverter AC</option>
+                <option value="Cassette AC">Cassette AC</option>
+            </select>
+        </div>
 
-    <div class="box">
-      <button type="submit">Final Submit</button>
-    </div>
-  </form>
+        <div class="row-flex">
+            <div class="form-group">
+                <label>Competition Brand</label>
+                <input type="text" id="compBrand" required>
+            </div>
+            <div class="form-group">
+                <label>Model Number</label>
+                <input type="text" id="modelNum" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Best Customer Price (₹)</label>
+            <input type="number" id="price" placeholder="0.00" required>
+        </div>
+
+        <div class="row-flex">
+            <div class="form-group">
+                <label>Cooling Capacity (W)</label>
+                <input type="text" id="capacity" placeholder="e.g. 5200" required>
+            </div>
+            <div class="form-group">
+                <label>ISEER Rating</label>
+                <input type="number" step="0.01" id="iseer" placeholder="e.g. 4.5" required>
+            </div>
+        </div>
+
+        <button type="submit" id="submitBtn">Submit Data</button>
+    </form>
+    
+    <div id="status"></div>
 </div>
+
+<script>
+    document.getElementById('dataForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const url = document.getElementById('scriptUrl').value;
+        const statusDiv = document.getElementById('status');
+        const btn = document.getElementById('submitBtn');
+
+        btn.disabled = true;
+        statusDiv.innerText = "Processing submission...";
+        statusDiv.style.color = "#333";
+        statusDiv.style.background = "#eee";
+
+        const payload = {
+            promoter: document.getElementById('promoter').value,
+            dealer: document.getElementById('dealer').value,
+            segment: document.getElementById('segment').value,
+            compBrand: document.getElementById('compBrand').value,
+            modelNum: document.getElementById('modelNum').value,
+            price: document.getElementById('price').value,
+            capacity: document.getElementById('capacity').value,
+            iseer: document.getElementById('iseer').value
+        };
+
+        // Note: Apps Script requires 'no-cors' for simple fetch, 
+        // which means we won't see the JSON response, but the data will arrive.
+        fetch(url, {
+            method: 'POST',
+            mode: 'no-cors', 
+            cache: 'no-cache',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        })
+        .then(() => {
+            statusDiv.style.color = "white";
+            statusDiv.style.background = "#27ae60";
+            statusDiv.innerText = "Success! Row added to Google Sheet.";
+            document.getElementById('dataForm').reset();
+        })
+        .catch(err => {
+            statusDiv.style.color = "white";
+            statusDiv.style.background = "#c0392b";
+            statusDiv.innerText = "Error: " + err;
+        })
+        .finally(() => {
+            btn.disabled = false;
+        });
+    });
+</script>
+
 </body>
 </html>
