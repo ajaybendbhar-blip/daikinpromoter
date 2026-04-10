@@ -2,171 +2,57 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Promoter Data Submission</title>
+    <title>Promoter Submission</title>
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --accent-color: #3498db;
-            --success-color: #27ae60;
-            --bg-color: #f0f2f5;
-        }
-
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            margin: 0; 
-            padding: 20px; 
-            background-color: var(--bg-color);
-            display: flex;
-            justify-content: center;
-        }
-
-        .container { 
-            width: 100%;
-            max-width: 550px; 
-            background: white; 
-            padding: 30px; 
-            border-radius: 12px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
-        }
-
-        h2 { 
-            color: var(--primary-color); 
-            margin-top: 0;
-            text-align: center;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 15px;
-        }
-
-        .form-group { margin-bottom: 15px; }
-
-        label { 
-            display: block;
-            font-size: 0.85em; 
-            font-weight: 600; 
-            color: #666; 
-            margin-bottom: 5px;
-            text-transform: uppercase;
-        }
-
-        input, select { 
-            width: 100%; 
-            padding: 12px; 
-            border: 1px solid #ddd; 
-            border-radius: 6px; 
-            box-sizing: border-box; 
-            font-size: 1em;
-            transition: border-color 0.3s;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: var(--accent-color);
-        }
-
-        button { 
-            width: 100%; 
-            padding: 14px; 
-            background: var(--success-color); 
-            color: white; 
-            border: none; 
-            border-radius: 6px; 
-            cursor: pointer; 
-            font-size: 1.1em;
-            font-weight: bold; 
-            margin-top: 10px;
-            transition: opacity 0.3s;
-        }
-
-        button:hover { opacity: 0.9; }
-        button:disabled { background: #ccc; cursor: not-allowed; }
-
-        #status { 
-            text-align: center; 
-            margin-top: 20px; 
-            font-weight: 600;
-            padding: 10px;
-            border-radius: 4px;
-        }
-
-        .row-flex { display: flex; gap: 10px; }
-        .row-flex > div { flex: 1; }
+        body { font-family: sans-serif; background: #f0f2f5; padding: 20px; display: flex; justify-content: center; }
+        .card { background: white; padding: 25px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); width: 100%; max-width: 500px; }
+        input, select, button { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 5px; box-sizing: border-box; }
+        button { background: #007bff; color: white; border: none; font-weight: bold; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .status { margin-top: 15px; padding: 10px; text-align: center; display: none; border-radius: 5px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Promoter Entry Form</h2>
-    
+<div class="card">
+    <h2>Promoter Data Entry</h2>
     <form id="dataForm">
-        <input type="hidden" id="scriptUrl" value="https://script.google.com/macros/s/AKfycbycNIF0Eq7BSuYY5lbn75bN6R2PhGYyF9knAvo_B7b6Z250oN-44DJorftedp3ZJqb4sw/exec">
+        <label>Promoter Name</label>
+        <input type="text" id="promoter" required>
+        
+        <label>Dealer</label>
+        <input type="text" id="dealer" required>
 
-        <div class="row-flex">
-            <div class="form-group">
-                <label>Promoter Name</label>
-                <input type="text" id="promoter" placeholder="John Doe" required>
-            </div>
-            <div class="form-group">
-                <label>Dealer Name</label>
-                <input type="text" id="dealer" placeholder="Retail Hub" required>
-            </div>
-        </div>
+        <label>Segment</label>
+        <select id="segment">
+            <option>Split AC</option>
+            <option>Window AC</option>
+            <option>Inverter AC</option>
+        </select>
 
-        <div class="form-group">
-            <label>Segment</label>
-            <select id="segment">
-                <option value="Split AC">Split AC</option>
-                <option value="Window AC">Window AC</option>
-                <option value="Inverter AC">Inverter AC</option>
-                <option value="Cassette AC">Cassette AC</option>
-            </select>
-        </div>
-
-        <div class="row-flex">
-            <div class="form-group">
-                <label>Competition Brand</label>
-                <input type="text" id="compBrand" required>
-            </div>
-            <div class="form-group">
-                <label>Model Number</label>
-                <input type="text" id="modelNum" required>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label>Best Customer Price (₹)</label>
-            <input type="number" id="price" placeholder="0.00" required>
-        </div>
-
-        <div class="row-flex">
-            <div class="form-group">
-                <label>Cooling Capacity (W)</label>
-                <input type="text" id="capacity" placeholder="e.g. 5200" required>
-            </div>
-            <div class="form-group">
-                <label>ISEER Rating</label>
-                <input type="number" step="0.01" id="iseer" placeholder="e.g. 4.5" required>
-            </div>
-        </div>
+        <input type="text" id="compBrand" placeholder="Competition Brand" required>
+        <input type="text" id="modelNum" placeholder="Model Number" required>
+        <input type="number" id="price" placeholder="Best Customer Price (₹)" required>
+        <input type="text" id="capacity" placeholder="Cooling Capacity" required>
+        <input type="number" step="0.01" id="iseer" placeholder="ISEER" required>
 
         <button type="submit" id="submitBtn">Submit Data</button>
     </form>
-    
-    <div id="status"></div>
+    <div id="status" class="status"></div>
 </div>
 
 <script>
-    document.getElementById('dataForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const url = document.getElementById('scriptUrl').value;
-        const statusDiv = document.getElementById('status');
-        const btn = document.getElementById('submitBtn');
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbycNIF0Eq7BSuYY5lbn75bN6R2PhGYyF9knAvo_B7b6Z250oN-44DJorftedp3ZJqb4sw/exec';
 
+    document.getElementById('dataForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitBtn');
+        const status = document.getElementById('status');
+        
         btn.disabled = true;
-        statusDiv.innerText = "Processing submission...";
-        statusDiv.style.color = "#333";
-        statusDiv.style.background = "#eee";
+        status.style.display = 'block';
+        status.style.background = '#eee';
+        status.innerText = "Sending data...";
 
         const payload = {
             promoter: document.getElementById('promoter').value,
@@ -179,29 +65,24 @@
             iseer: document.getElementById('iseer').value
         };
 
-        // Note: Apps Script requires 'no-cors' for simple fetch, 
-        // which means we won't see the JSON response, but the data will arrive.
-        fetch(url, {
-            method: 'POST',
-            mode: 'no-cors', 
-            cache: 'no-cache',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        })
-        .then(() => {
-            statusDiv.style.color = "white";
-            statusDiv.style.background = "#27ae60";
-            statusDiv.innerText = "Success! Row added to Google Sheet.";
+        try {
+            // Using 'text/plain' helps avoid pre-flight OPTIONS issues with Apps Script
+            await fetch(WEB_APP_URL, {
+                method: 'POST',
+                mode: 'no-cors', 
+                headers: { 'Content-Type': 'text/plain' },
+                body: JSON.stringify(payload)
+            });
+
+            status.style.background = '#d4edda';
+            status.innerText = "Submission Sent! Check your sheet.";
             document.getElementById('dataForm').reset();
-        })
-        .catch(err => {
-            statusDiv.style.color = "white";
-            statusDiv.style.background = "#c0392b";
-            statusDiv.innerText = "Error: " + err;
-        })
-        .finally(() => {
+        } catch (err) {
+            status.style.background = '#f8d7da';
+            status.innerText = "Error: " + err.message;
+        } finally {
             btn.disabled = false;
-        });
+        }
     });
 </script>
 
