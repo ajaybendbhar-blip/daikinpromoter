@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Promoter Competition Submission</title>
+  <style>
+    :root{--bg:#f7f6f2;--surface:#fff;--surface2:#f1eeea;--text:#222018;--muted:#6f6b63;--border:#d8d2ca;--primary:#01696f;--primarySoft:#dceceb;--danger:#a13544;--dangerSoft:#f6e0e5;--shadow:0 10px 30px rgba(29,31,27,.08)}
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);font-family:Arial,sans-serif;color:var(--text)}
+    .app{max-width:840px;margin:0 auto;padding:16px 16px 100px}.panel{background:#fff;border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:20px;margin-bottom:16px}
+    h1{margin:0 0 8px;font-size:28px} h2{margin:0 0 8px;font-size:18px}.meta{color:var(--muted);font-size:14px;line-height:1.5}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}.segmentGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}.stat{background:var(--surface2);border-radius:14px;padding:12px;text-align:center}.stat b{display:block;margin-bottom:4px;font-size:18px}
+    label{display:block;margin-bottom:6px;font-size:14px;font-weight:700} input,select,button,textarea{font:inherit}
+    input,select,textarea{width:100%;min-height:48px;border:1px solid var(--border);border-radius:14px;padding:13px 14px;font-size:16px;background:#fff}
+    textarea{min-height:90px;resize:vertical}
+    .btn{width:100%;min-height:48px;border:0;border-radius:14px;padding:14px 16px;font-size:16px;font-weight:700;cursor:pointer}
+    .btnPrimary{background:var(--primary);color:#fff}.btnSecondary{background:#ece7df;color:var(--text)}.btnDanger{background:var(--dangerSoft);color:var(--danger)}
+    .note{display:none;padding:14px;border-radius:14px;font-size:14px;line-height:1.45;margin-bottom:16px}.note.show{display:block}.note.ok{background:#eaf5f5;color:#0a4f54}.note.error{background:#f8e8eb;color:var(--danger)}
+    .seg{border:1px solid var(--border);background:#fff;border-radius:14px;padding:12px;text-align:left}.seg.active{border-color:#01696f;background:var(--primarySoft)}.seg.done{background:#e2f0de;border-color:rgba(47,107,31,.28)}
+    .entries{display:grid;gap:12px}.entry{border:1px solid var(--border);background:#fff;border-radius:16px;padding:16px}.entry h3{margin:0 0 6px;font-size:16px}.entry p{margin:0 0 4px;color:var(--muted);font-size:14px}.empty{border:1px dashed var(--border);border-radius:16px;padding:16px;text-align:center;color:var(--muted);background:#fcfbf9}
+    .footer{position:sticky;bottom:0;background:linear-gradient(180deg,rgba(247,246,242,0) 0%,rgba(247,246,242,.92) 28%,rgba(247,246,242,1) 100%);padding-top:12px}.footerCard{display:grid;gap:8px;padding:12px;border-radius:20px;background:#fff;border:1px solid var(--border);box-shadow:var(--shadow)}
+    .hint{font-size:12px;color:var(--muted);margin-top:6px}
+    @media (max-width:700px){.grid2,.segmentGrid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+<div class="app">
+  <section class="panel">
+    <h1>Promoter Competition Submission</h1>
+    <p class="meta">Fill basic promoter and store details once, then capture segment-wise model data, then upload store display and BEE label photos before final submit.</p>
+  </section>
+
+  <section class="panel">
+    <h2>One-time basic details</h2>
+    <div class="grid2">
+      <div><label for="promoter">Promoter Name</label><input id="promoter" type="text"></div>
+      <div><label for="employeeCode">Promoter Employee Code</label><input id="employeeCode" type="text"></div>
+      <div><label for="storeName">Store Name</label><input id="storeName" type="text"></div>
+      <div><label for="storeCode">Store Code</label><input id="storeCode" type="text"></div>
+      <div><label for="dealerCategory">Dealer Category</label><select id="dealerCategory"><option value="">Select category</option><option>NR</option><option>GT</option><option>DSP</option></select></div>
+      <div><label for="storeCity">Store City</label><input id="storeCity" type="text"></div>
+      <div style="grid-column:1/-1;"><label for="storeAddress">Store Address</label><textarea id="storeAddress"></textarea></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <div class="stats">
+      <div class="stat"><b id="statCurrent">1T 3*</b><span>Current</span></div>
+      <div class="stat"><b id="statDone">0</b><span>Saved</span></div>
+      <div class="stat"><b id="statRows">0</b><span>Total Rows</span></div>
+    </div>
+    <div id="note" class="note"></div>
+    <h2>Segment-wise competition data</h2>
+    <div id="segments" class="segmentGrid"></div>
+  </section>
+
+  <section class="panel">
+    <h2 id="formTitle">Entry: 1T 3*</h2>
+    <div class="grid2">
+      <div><label for="segment">Segment</label><select id="segment"></select></div>
+      <div><label for="brand">Brand</label><select id="brand"><option value="">Select brand</option><option>Daikin</option><option>LG</option><option>Voltas</option><option>Bluestar</option><option>Hitachi</option><option>Panasonic</option><option>Llyod</option></select></div>
+      <div><label for="model">Model Number</label><input id="model" type="text"></div>
+      <div><label for="price">Best Customer Price</label><input id="price" type="number"></div>
+      <div style="grid-column:1/-1;"><button id="addBtn" class="btn btnPrimary">Add Brand Entry</button></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Third section: Photos and display</h2>
+    <div class="grid2">
+      <div>
+        <label for="beePhoto">BEE Star Rating Label Photo</label>
+        <input id="beePhoto" type="file" accept="image/*" capture="environment">
+        <div class="hint">Use phone camera or gallery.</div>
+      </div>
+      <div>
+        <label for="daikinDisplay">Daikin Total Display</label>
+        <input id="daikinDisplay" type="number" min="0" placeholder="Enter total Daikin display count">
+      </div>
+      <div>
+        <label for="storeDisplay">Store Total Display</label>
+        <input id="storeDisplay" type="number" min="0" placeholder="Enter total store display count">
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Entries</h2>
+    <div id="entries" class="entries"></div>
+  </section>
+
+  <div class="footer">
+    <div class="footerCard">
+      <button id="saveBtn" class="btn btnSecondary">Save This Segment</button>
+      <button id="nextBtn" class="btn btnSecondary">Save & Next Segment</button>
+      <button id="submitBtn" class="btn btnPrimary">Final Submit</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbx4_q0ZfYTUzJVjO5EI70oB9tJm7bWfKguXFdP4Jlhj0bL__jj65KGWqN4TDcuT2QhyyA/exec';
+const segments = ['1T 3*', '1.5T 3*', '1T 5*', '1.5T 5*'];
+const state = { active: '1T 3*', data: Object.fromEntries(segments.map(s => [s, []])), saved: Object.fromEntries(segments.map(s => [s, false])) };
+const $ = id => document.getElementById(id);
+function note(msg, type='ok') { const n = $('note'); n.textContent = msg; n.className = `note show ${type}`; }
+function fillSegments() { $('segment').innerHTML = segments.map(s => `<option value="${s}">${s}</option>`).join(''); $('segment').value = state.active; }
+function renderSegments() { $('segments').innerHTML = segments.map(seg => `<button class="seg ${seg===state.active?'active':''} ${state.saved[seg]?'done':''}" onclick="switchSegment('${seg}')"><strong>${seg}</strong><div style="margin-top:8px;color:#6f6b63;font-size:12px;">${state.saved[seg]?'Saved':'Pending'} · ${state.data[seg].length} entries</div></button>`).join(''); $('formTitle').textContent = `Entry: ${state.active}`; $('statCurrent').textContent = state.active; $('statDone').textContent = segments.filter(s => state.saved[s]).length; $('statRows').textContent = segments.reduce((a,s) => a + state.data[s].length, 0); $('segment').value = state.active; }
+function renderEntries() { const rows = state.data[state.active]; const box = $('entries'); if (!rows.length) { box.innerHTML = '<div class="empty">No entries added for this segment.</div>'; return; } box.innerHTML = rows.map((row, index) => `<div class="entry"><h3>${row.brand}</h3><p><strong>Segment:</strong> ${row.segment}</p><p><strong>Model:</strong> ${row.model}</p><p><strong>Best Customer Price:</strong> ₹ ${Number(row.price).toLocaleString('en-IN')}</p><button class="btn btnDanger" style="margin-top:12px;" onclick="deleteEntry(${index})">Delete</button></div>`).join(''); }
+window.switchSegment = function(seg) { state.active = seg; renderSegments(); renderEntries(); }
+window.deleteEntry = function(index) { state.data[state.active].splice(index, 1); state.saved[state.active] = false; renderSegments(); renderEntries(); note('Entry deleted. Please save this segment again.'); }
+$('segment').addEventListener('change', e => { state.active = e.target.value; renderSegments(); renderEntries(); });
+function topFieldsValid() { return $('promoter').value.trim() && $('employeeCode').value.trim() && $('storeName').value.trim() && $('storeCode').value.trim() && $('dealerCategory').value.trim() && $('storeCity').value.trim() && $('storeAddress').value.trim(); }
+$('addBtn').addEventListener('click', () => { if (!topFieldsValid()) { note('Please fill all one-time basic details first.', 'error'); return; } const brand = $('brand').value.trim(); const model = $('model').value.trim(); const price = $('price').value.trim(); if (!brand || !model || !price) { note('Please fill brand, model number and best customer price.', 'error'); return; } state.data[state.active].push({ segment: state.active, brand, model, price }); state.saved[state.active] = false; ['brand','model','price'].forEach(id => $(id).value = ''); renderSegments(); renderEntries(); note(`Entry added for ${state.active}.`); });
+function saveSegment() { if (!state.data[state.active].length) { note('Add at least one row before saving this segment.', 'error'); return false; } state.saved[state.active] = true; renderSegments(); renderEntries(); note(`${state.active} saved successfully.`); return true; }
+$('saveBtn').addEventListener('click', saveSegment);
+$('nextBtn').addEventListener('click', () => { if (!saveSegment()) return; const i = segments.indexOf(state.active); if (i < segments.length - 1) { state.active = segments[i + 1]; renderSegments(); renderEntries(); note(`Continue with ${state.active}.`); } else { note('All segments saved. Complete the third section and then final submit.'); } });
+function fileToBase64(file) { return new Promise((resolve, reject) => { if (!file) return resolve(''); const reader = new FileReader(); reader.onload = () => resolve(String(reader.result)); reader.onerror = reject; reader.readAsDataURL(file); }); }
+$('submitBtn').addEventListener('click', async () => { if (!topFieldsValid()) { note('Please fill all one-time basic details first.', 'error'); return; } const pending = segments.filter(s => !state.saved[s]); if (pending.length) { note(`Please save all pending segments first: ${pending.join(', ')}`, 'error'); return; } const allRows = segments.flatMap(seg => state.data[seg]); if (!allRows.length) { note('Please add at least one segment entry before final submit.', 'error'); return; } const daikinDisplay = $('daikinDisplay').value.trim(); const storeDisplay = $('storeDisplay').value.trim(); if (!daikinDisplay || !storeDisplay) { note('Please fill Daikin total display and Store total display.', 'error'); return; } let beePhotoBase64 = ''; const beeFile = $('beePhoto').files[0]; if (beeFile) { beePhotoBase64 = await fileToBase64(beeFile); } const formData = new URLSearchParams(); formData.append('submittedAt', new Date().toISOString()); formData.append('promoter', $('promoter').value.trim()); formData.append('employeeCode', $('employeeCode').value.trim()); formData.append('storeName', $('storeName').value.trim()); formData.append('storeCode', $('storeCode').value.trim()); formData.append('dealerCategory', $('dealerCategory').value.trim()); formData.append('storeCity', $('storeCity').value.trim()); formData.append('storeAddress', $('storeAddress').value.trim()); formData.append('daikinDisplay', daikinDisplay); formData.append('storeDisplay', storeDisplay); formData.append('beePhotoBase64', beePhotoBase64); formData.append('rows', JSON.stringify(allRows)); try { const res = await fetch(WEB_APP_URL, { method: 'POST', body: formData }); const text = await res.text(); if (!res.ok) throw new Error(text || 'Submission failed'); note('Submitted successfully. Data saved to Google Sheet.'); } catch (err) { note(`Submission failed: ${err.message}`, 'error'); } });
+fillSegments(); renderSegments(); renderEntries();
+</script>
+</body>
+</html>
